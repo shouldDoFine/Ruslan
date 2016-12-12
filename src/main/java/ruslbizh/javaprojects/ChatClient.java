@@ -40,7 +40,7 @@ public class ChatClient implements Runnable{
                 }
                 output.writeObject(new Message("name",Name));
                 Message checkname = (Message) input.readObject();
-                if(checkname.getValue().equals("good")){
+                if((checkname.getFunction().equals("checkname")) && (checkname.getValue().equals("good"))){
                     check = false; //get out from cycle
                 }
             }
@@ -73,7 +73,7 @@ public class ChatClient implements Runnable{
                     Message rdobj = (Message) input.readObject();
                     if (rdobj.getFunction().equals("message")) {
                         frame.getAllMessages().add(rdobj.getValue());
-                        frame.rewriteAllMessages();
+                        frame.addToAllMessages();
                     }
                 }
             }
@@ -82,14 +82,13 @@ public class ChatClient implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     void sayBye(){
         try {
             String tmp = new String(Name + " left the room\n\n");
             frame.getAllMessages().add(tmp);
-            frame.rewriteAllMessages();
+            frame.addToAllMessages();
             output.writeObject(new Message("message",tmp));
         } catch (IOException e) {
             e.printStackTrace();
@@ -150,14 +149,13 @@ class MyFrame extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 try {
                     allMessages.add(client.getName()+": \n"+textToWrite.getText()+"\n\n");
-                    rewriteAllMessages();
+                    addToAllMessages();
                     client.getOutput().writeObject(new Message("message", client.getName()+": \n"+textToWrite.getText()+"\n\n"));
                     textToWrite.setText("");
 
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-
             }
         });
         panel.add(sendBut);
@@ -165,7 +163,7 @@ class MyFrame extends JFrame{
         add(panel);
     }
 
-    synchronized void rewriteAllMessages(){
+    synchronized void addToAllMessages(){
         StringBuilder past = new StringBuilder();
         for (String el : allMessages) {
             past.append(el);
