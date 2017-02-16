@@ -6,10 +6,10 @@ import java.awt.*;
  * Hello world!
  *
  */
-public class App 
+public class App
 {
     public static void main(String[] args) {
-         EventQueue.invokeLater(new Runnable(){
+        EventQueue.invokeLater(new Runnable(){
             @Override
             public void run() {
                 new Thread(new ChatServer()).start();

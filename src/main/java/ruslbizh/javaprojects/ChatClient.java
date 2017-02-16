@@ -44,9 +44,6 @@ public class ChatClient implements Runnable{
                     check = false; //get out from cycle
                 }
             }
-
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -159,7 +156,6 @@ class MyFrame extends JFrame{
             }
         });
         panel.add(sendBut);
-
         add(panel);
     }
 

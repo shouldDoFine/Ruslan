@@ -15,8 +15,10 @@ class ClientThread implements Runnable {
     private ObjectOutputStream output;
     private ObjectInputStream input;
     private String name;
-    private ChatServer chat;
-    private Object lock = new Object();
+    private Room room;
+
+    public ClientThread() {
+    }
 
     public ClientThread(Socket clientSt) {
         try {
@@ -33,7 +35,6 @@ class ClientThread implements Runnable {
         try {
             while(true) {
                 Message rdobj = (Message) input.readObject();
-
                 boolean check = true;
                 if (rdobj.getFunction().equals("name")) {
                     while (check) {
@@ -41,7 +42,7 @@ class ClientThread implements Runnable {
                         check = !checkName(name);
                         if(!check){
                             System.out.println("name good");
-                            chat.getAllNames().add(name);
+                            room.getAllNames().add(name);
                             output.writeObject(new Message("checkname","good"));
                         }
                         else{
@@ -53,7 +54,7 @@ class ClientThread implements Runnable {
                     sayHello();
                 }
                 else if (rdobj.getFunction().equals("message")) {
-                    chat.sendMessageToAllUsers(rdobj.getFunction(),rdobj.getValue(),name);
+                    room.sendMessageToAllUsers(rdobj.getFunction(),rdobj.getValue(),name);
                 }
             }
 
@@ -66,13 +67,13 @@ class ClientThread implements Runnable {
 
     synchronized void sayHello(){
         Message message = new Message("message",new String(name + " has been added to room\n\n"));
-        chat.sendMessageToAllUsers(message.getFunction(),message.getValue(),name);
+        room.sendMessageToAllUsers(message.getFunction(),message.getValue(),name);
     }
 
     boolean checkName(String nm){
         if((nm != null) && (!nm.equals(""))) {
-            for (String el : chat.getAllNames()) {
-                if (el.equals(name)) {
+            for (String el : room.getAllNames()) {
+                if (el.equals(nm)) {
                     return false;
                 }
             }
@@ -93,7 +94,7 @@ class ClientThread implements Runnable {
         return name;
     }
 
-    public void setChat(ChatServer chat) {
-        this.chat = chat;
+    public void setRoom(Room room) {
+        this.room = room;
     }
 }
